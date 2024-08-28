@@ -38,6 +38,15 @@ WHERE OrderDetails.ProductID=Products.ProductID
 GROUP BY EmployeeID
 ORDER BY SUM(Price*Quantity) DESC;
 
+SELECT * FROM Employees
+WHERE EmployeeID = (
+    SELECT TOP 1 EmployeeID FROM Orders, OrderDetails, Products
+    WHERE OrderDetails.ProductID=Products.ProductID
+      AND OrderDetails.OrderID=Orders.OrderID
+    GROUP BY EmployeeID
+    ORDER BY SUM(Price*Quantity) DESC
+);
+
 --  Which employ generated the least revenue?
 SELECT TOP 1 SUM(Price*Quantity) AS Revenue, EmployeeID FROM Orders, OrderDetails, Products
 WHERE OrderDetails.ProductID=Products.ProductID
@@ -53,3 +62,35 @@ WHERE OrderDetails.ProductID=Products.ProductID
   AND OrderDetails.OrderID=Orders.OrderID
 GROUP BY EmployeeID
 ORDER BY SUM(Price*Quantity) DESC;
+
+-- number of different products per order
+SELECT COUNT(*) AS DistinctProducts, OrderID FROM OrderDetails
+GROUP BY OrderID;
+
+SELECT * FROM OrderDetails
+INNER JOIN Orders ON OrderDetails.OrderID=Orders.OrderID;
+
+-- employees who shipped the same item more than once?
+SELECT Orders.EmployeeID, OrderDetails.ProductID, COUNT(OrderDetails.ProductId) AS ProductCount FROM Orders
+INNER JOIN OrderDetails ON Orders.OrderID=OrderDetails.OrderID
+GROUP BY Orders.EmployeeID, OrderDetails.ProductID
+HAVING COUNT(OrderDetails.ProductId) > 1
+
+-- number of employees who shipped the same item more than once?
+SELECT COUNT(DISTINCT Orders.EmployeeID) FROM Orders
+INNER JOIN OrderDetails ON Orders.OrderID=OrderDetails.OrderID
+GROUP BY Orders.EmployeeID, OrderDetails.ProductID
+HAVING COUNT(OrderDetails.ProductId) > 1;
+
+-- Which employ created the most orders?
+SELECT TOP 1 EmployeeID, COUNT(OrderID) AS OrderCount FROM Orders
+GROUP BY EmployeeID
+ORDER BY COUNT(OrderID) DESC;
+
+-- How many customers are in the EU?
+SELECT COUNT(*) FROM Customers
+WHERE Country IN ('Austria', 'Belgium', 'Bulgaria', 'Croatia', 'Cyprus', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands', 'Poland', 'Portugal', 'Romania', 'Slovakia', 'Slovenia', 'Spain', 'Sweden');
+
+-- How many employs work for the company?
+SELECT COUNT(*) FROM Employees;
+
