@@ -92,5 +92,67 @@ SELECT COUNT(*) FROM Customers
 WHERE Country IN ('Austria', 'Belgium', 'Bulgaria', 'Croatia', 'Cyprus', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands', 'Poland', 'Portugal', 'Romania', 'Slovakia', 'Slovenia', 'Spain', 'Sweden');
 
 -- How many employs work for the company?
-SELECT COUNT(*) FROM Employees;
+SELECT COUNT(*) AS NumberOfEmployees FROM Employees;
 
+-- How many shipments had to travel to another country?
+SELECT Suppliers.Country AS Origin, Customers.Country AS Destination FROM Suppliers
+INNER JOIN Products ON Suppliers.SupplierID = Products.SupplierID
+INNER JOIN OrderDetails ON Products.ProductID = OrderDetails.ProductID
+INNER JOIN Orders ON OrderDetails.OrderID = Orders.OrderID
+INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID
+
+
+-- How many shipments had to travel to another country?
+SELECT COUNT(*) AS NumberOfShipments
+FROM Suppliers, Products, OrderDetails, Orders, Customers
+WHERE Suppliers.SupplierID = Products.SupplierID
+  AND Products.ProductID = OrderDetails.ProductID
+  AND OrderDetails.OrderID = Orders.OrderID
+  AND Orders.CustomerID = Customers.CustomerID
+  AND Suppliers.Country = Customers.Country;
+
+-- How many unique products were purchased?
+SELECT Count(DISTINCT ProductID) FROM OrderDetails;
+
+-- Table with products per category
+SELECT Categories.CategoryID, COUNT(*) AS NumberOfProducts FROM Products
+INNER JOIN Categories ON Products.CategoryID = Categories.CategoryID
+GROUP BY Categories.CategoryID;
+
+-- Table with frequency of product categories purchased
+SELECT Categories.CategoryID, COUNT(*) AS FrequencyOrdered FROM OrderDetails
+INNER JOIN Products on OrderDetails.ProductID = Products.ProductID
+INNER JOIN Categories ON Products.CategoryID = Categories.CategoryID
+GROUP BY Categories.CategoryID;
+
+SELECT Categories.CategoryID, COUNT(*) AS FrequencyOrdered
+FROM OrderDetails, Products, Categories
+WHERE OrderDetails.ProductID = Products.ProductID
+  AND Products.CategoryID = Categories.CategoryID
+GROUP BY Categories.CategoryID;
+
+-- Produce and confection products
+SELECT ProductName
+FROM Products
+WHERE CategoryID IN (
+    SELECT CategoryID FROM Categories
+    WHERE CategoryName = 'Produce'
+    OR CategoryName = 'Confections'
+    );
+
+-- correlated subquery
+SELECT CustomerName
+From Customers C
+WHERE EXISTS(
+    SELECT *
+    FROM Orders O
+    WHERE O.CustomerID = C.CustomerID
+    AND O.OrderDate > 1996-12-11
+);
+
+-- order count per customer
+SELECT CustomerName,
+   (SELECT COUNT(*) FROM Orders
+    WHERE Orders.CustomerID = Customers.CustomerID)
+    AS OrderCount
+FROM Customers;
