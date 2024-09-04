@@ -156,3 +156,23 @@ SELECT CustomerName,
     WHERE Orders.CustomerID = Customers.CustomerID)
     AS OrderCount
 FROM Customers;
+
+-- product price stats
+SELECT AVG(Price), MIN(Price), MAX(Price), STDEV(Price) FROM Products;
+
+SELECT CategoryID, AVG(Price) AS Price
+FROM Products
+GROUP BY CategoryID
+ORDER BY AVG(Price);
+
+SELECT * FROM Products
+WHERE Price > (
+    SELECT AVG(Price) FROM Products
+    );
+
+-- order date stats
+SELECT MIN(OrderDate), MAX(OrderDate) FROM Orders;
+
+
+-- window functions
+-- SELECT ProductID, CategoryID, Price,
