@@ -18,6 +18,7 @@ CREATE TABLE Persons (
     FirstName varchar(255),
     Age int,
     Email varchar(255),
+    City varchar(255) DEFAULT 'St. Louis',
     CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
 );
 
@@ -37,10 +38,19 @@ INSERT INTO Persons (LastName, FirstName, Age, Email)
 VALUES
     ('Waks', 'Arielle', 30, 'aw@aol.com'),
     ('Witherspoon', 'Theo', 30, 'tw@hotmail.com'),
-    ('Sontag', 'Ruth', 60, 'rs@yearthlink.net');
+    ('Waks', 'Ruth', 59, 'rs@yearthlink.net');
 
 -- Insert Into Select statement
 INSERT INTO OldPersons
 SELECT LastName, FirstName, Age FROM Persons
 WHERE Age > 50;
 
+-- Update statement
+UPDATE Persons
+SET LastName = 'Sontag', Age = 60
+WHERE FirstName = 'Ruth';
+
+-- Update multiple records
+UPDATE Persons
+SET City = 'Asheville'
+WHERE Age < 40;
