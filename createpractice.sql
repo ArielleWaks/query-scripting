@@ -54,3 +54,11 @@ WHERE FirstName = 'Ruth';
 UPDATE Persons
 SET City = 'Asheville'
 WHERE Age < 40;
+
+-- Update data basaed on another table using a sub query in the WHERE clause
+UPDATE Persons
+SET Email = 'outdated'
+WHERE LastName IN (
+    SELECT LastName
+    FROM OldPersons
+    );
