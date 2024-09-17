@@ -1,30 +1,20 @@
--- Create table
-CREATE TABLE Tasks (
-    ID INT PRIMARY KEY,
-    Category ENUM('household', 'personal', 'jobapp', 'coding'),
-    Description VARCHAR(255),
-    PointsGuess INT,
-    DueDate DATE
-);
-
--- Add table column
-ALTER TABLE Tasks
-ADD Status VARCHAR(255) DEFAULT 'Not Started';
 
 -- Create table with constraints
 CREATE TABLE Persons (
-    ID int UNIQUE NOT NULL AUTO_INCREMENT,
-    LastName varchar(255) UNIQUE NOT NULL,
-    FirstName varchar(255),
-    Age int,
-    Email varchar(255),
-    City varchar(255) DEFAULT 'St. Louis',
-    CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
+    PersonID INT UNIQUE NOT NULL AUTO_INCREMENT,
+    LastName VARCHAR(255) NOT NULL,
+    FirstName VARCHAR(255),
+    Age INT,
+    Email VARCHAR(255),
+    City VARCHAR(255) DEFAULT 'St. Louis',
+    PRIMARY KEY (PersonID)
 );
 
 -- Drop column
 ALTER TABLE Persons
 DROP COLUMN Email;
+
+DROP TABLE Tasks;
 
 -- Create table using another table
 CREATE TABLE OldPersons AS
@@ -32,6 +22,26 @@ CREATE TABLE OldPersons AS
     FROM Persons
     WHERE Age > 50;
 
+-- Create table
+CREATE TABLE Tasks (
+    TaskID INT,
+    Category ENUM('household', 'personal', 'jobapp', 'coding'),
+    Description VARCHAR(255),
+    PointsGuess INT,
+    DueDate DATE,
+    PersonID INT,
+    PRIMARY KEY (TaskID),
+    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID) ON DELETE CASCADE
+);
+
+-- Add table column
+ALTER TABLE Tasks
+    ADD Status VARCHAR(255) DEFAULT 'Not Started';
+
+
+-- Add table foreign id
+# ALTER TABLE Tasks
+# ADD FOREIGN KEY (PersonID) REFERENCES Persons(PersonID) ON DELETE CASCADE;
 
 -- Insert Into statement with multiple values
 INSERT INTO Persons (LastName, FirstName, Age, Email)
@@ -62,3 +72,6 @@ WHERE LastName IN (
     SELECT LastName
     FROM OldPersons
     );
+
+-- Add foreign id to table
+
